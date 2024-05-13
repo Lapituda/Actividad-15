@@ -1,40 +1,39 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-from datetime import datetime
 
 app = FastAPI()
 
-class Note(BaseModel):
-    title: str
-    author: str
-    body: str
+class Movie(BaseModel):
+    name: str
     classification: str
-    created_at: datetime = datetime.now()
+    release_date: str
+    review: str
+    season: int
 
-notes_db = []
+class Character(BaseModel):
+    name: str
+    movie_or_series: str
+    image: str
+    description: str
 
-@app.post("/notes/")
-def create_note(note: Note):
-    notes_db.append(note)
-    return note
+movies_db = []
+characters_db = []
 
-@app.get("/notes/", response_model=List[Note])
-def read_notes():
-    return notes_db
+@app.post("/movies/")
+def create_movie(movie: Movie):
+    movies_db.append(movie)
+    return movie
 
-@app.put("/notes/{note_id}")
-def update_note(note_id: int, note: Note):
-    if note_id < len(notes_db):
-        notes_db[note_id] = note
-        return note
-    else:
-        raise HTTPException(status_code=404, detail="Note not found")
+@app.get("/movies/", response_model=List[Movie])
+def read_movies():
+    return movies_db
 
-@app.delete("/notes/{note_id}")
-def delete_note(note_id: int):
-    if note_id < len(notes_db):
-        deleted_note = notes_db.pop(note_id)
-        return deleted_note
-    else:
-        raise HTTPException(status_code=404, detail="Note not found")
+@app.post("/characters/")
+def create_character(character: Character):
+    characters_db.append(character)
+    return character
+
+@app.get("/characters/", response_model=List[Character])
+def read_characters():
+    return characters_db
